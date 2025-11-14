@@ -1,22 +1,48 @@
 import Header from "@/components/layout/Header";
 import UserCard from "@/components/common/UserCard";
-import { UserProps } from "@/interfaces";
+import UserModal from "@/components/common/UserModal";
+import { UserProps, UserData } from "@/interfaces";
+import { useState } from "react";
 
-interface UsersPageProps {
-  posts: UserProps[];
-}
+const Users: React.FC<{ posts: UserProps[] }> = ({ posts }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [newUser, setNewUser] = useState<UserData | null>(null);
 
-const Users: React.FC<UsersPageProps> = ({ posts }) => {
+  const handleAddUser = (user: UserData) => {
+    setNewUser({ ...user, id: posts.length + 1 });
+  };
+
   return (
-    <div>
+    <div className="flex flex-col h-screen">
       <Header />
 
-      <div className="p-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((user) => (
-          // spread user props so UserCard receives fields matching UserProps
-          <UserCard key={user.id} {...user} />
-        ))}
-      </div>
+      <main className="p-4">
+        <div className="flex justify-between">
+          <h1 className="text-2xl font-semibold">Users List</h1>
+
+          <button
+            onClick={() => setModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-full"
+          >
+            Add User
+          </button>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 mt-4">
+          {posts.map((user, key) => (
+            <UserCard {...user} key={key} />
+          ))}
+
+          {newUser && <UserCard {...newUser} />}
+        </div>
+      </main>
+
+      {isModalOpen && (
+        <UserModal
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleAddUser}
+        />
+      )}
     </div>
   );
 };
