@@ -1,39 +1,43 @@
 import Header from "@/components/layout/Header";
 import UserCard from "@/components/common/UserCard";
 import UserModal from "@/components/common/UserModal";
-import { UserProps, UserData } from "@/interfaces";
+import { UserProps } from "@/interfaces";
 import { useState } from "react";
 
 const Users: React.FC<{ posts: UserProps[] }> = ({ posts }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [newUser, setNewUser] = useState<UserData | null>(null);
+  const [users, setUsers] = useState<UserProps[]>(posts);
 
-  const handleAddUser = (user: UserData) => {
-    setNewUser({ ...user, id: posts.length + 1 });
+  const handleAddUser = (newUser: UserProps) => {
+    const savedUser = { ...newUser, id: users.length + 1 };
+    setUsers([...users, savedUser]);
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div>
       <Header />
-
-      <main className="p-4">
-        <div className="flex justify-between">
-          <h1 className="text-2xl font-semibold">Users List</h1>
+      <main className="p-6">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-2xl font-bold">Users</h1>
 
           <button
             onClick={() => setModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-full"
+            className="bg-blue-600 text-white px-4 py-2 rounded-full"
           >
             Add User
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          {posts.map((user, key) => (
-            <UserCard {...user} key={key} />
+        <div className="grid grid-cols-3 gap-4">
+          {users.map((user) => (
+            <UserCard
+              key={user.id}
+              id={user.id}
+              name={user.name}
+              username={user.username}
+              email={user.email}
+            />
           ))}
-
-          {newUser && <UserCard {...newUser} />}
         </div>
       </main>
 
